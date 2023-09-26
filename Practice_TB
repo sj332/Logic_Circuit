@@ -1,0 +1,124 @@
+`timescale	1ns/1ps
+
+//	Test Bench for 1-bit Full Adders	//
+
+module	tb_fas;
+
+	wire	s_df1,s_df2,s_bh1,s_bh2;
+	wire	co_df1,co_df2,co_bh1,co_bh2;
+
+	reg	a;
+	reg	b;
+	reg	ci;
+
+	fa_dataflow1	fa_df1(
+		.s	(s_df1	),
+		.co	(co_df1	),
+		.a	(a	),
+		.b	(b	),
+		.ci	(ci	));
+
+	fa_dataflow2	fa_df2(
+		.s	(s_df2	),
+		.co	(co_df2	),
+		.a	(a	),
+		.b	(b	),
+		.ci	(ci	));
+
+	fa_behavior1	fa_bh1(
+		.s	(s_bh1	),
+		.co	(co_bh1	),
+		.a	(a	),
+		.b	(b	),
+		.ci	(ci	));
+
+	fa_dataflow	fa_bh2(
+		.s	(s_bh2	),
+		.co	(co_bh2	),
+		.a	(a	),
+		.b	(b	),
+		.ci	(ci	));
+
+	initial begin
+		$display("1-bit Full Adder");
+		#100	{ci,a,b}=3'b000;	#100	$display("Expected: 0/0,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	{ci,a,b}=3'b001;	#100	$display("Expected: 0/1,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	{ci,a,b}=3'b010;	#100	$display("Expected: 0/1,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	{ci,a,b}=3'b011;	#100	$display("Expected: 1/0,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	{ci,a,b}=3'b100;	#100	$display("Expected: 0/1,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	{ci,a,b}=3'b101;	#100	$display("Expected: 1/0,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	{ci,a,b}=3'b110;	#100	$display("Expected: 1/0,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	{ci,a,b}=3'b111;	#100	$display("Expected: 1/1,H/W Output: %b/%b,%b/%b,%b/%b,%b/%b",co_df1,s_df1,co_df2,s_df2,co_bh1,co_bh2,s_bh2);
+		#100	$finish;
+	end
+
+endmodule
+
+//	Test Bench for 2:1 MUX		//
+
+module	tb_mux2;
+
+	wire		mux2_s_y;
+	reg		mux2_s_d0;
+	reg		mux2_s_d1;
+	reg		mux2_s_s;
+
+	wire	[3:0]	mux2_m_y;
+	reg	[3:0]	mux2_m_d0;  
+	reg	[3:0]	mux2_m_d1;
+	reg		mux2_m_s;
+
+	mux2_dataflow
+		u0_mux2_dataflow(
+		.y	(mux2_s_y	),
+		.d0	(mux2_s_d0	),
+		.d1	(mux2_s_d1	),
+		.s	(mux2_s_s	));
+
+	mux2_dataflow_multibit
+		u0_mux2_dataflow_multibit(
+		.y	(mux2_m_y	),
+		.d0	(mux2_m_d0	),
+		.d1	(mux2_m_d1	),
+		.s	(mux2_m_s	));
+
+	integer	i,err;
+	initial	begin
+		$display("===============");
+		$display("2:1 MUX (1-bit)");
+		$display("===============");
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b000;	#100	$display("Expected: 0,H/W Output: %b",mux2_s_y);
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b001;	#100	$display("Expected: 0,H/W Output: %b",mux2_s_y);
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b010;	#100	$display("Expected: 1,H/W Output: %b",mux2_s_y);
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b011;	#100	$display("Expected: 1,H/W Output: %b",mux2_s_y);
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b100;	#100	$display("Expected: 0,H/W Output: %b",mux2_s_y);
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b101;	#100	$display("Expected: 1,H/W Output: %b",mux2_s_y);
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b110;	#100	$display("Expected: 0,H/W Output: %b",mux2_s_y);
+		#100	{mux2_s_s,mux2_s_d0,mux2_s_d1}=3'b111;	#100	$display("Expected: 1,H/W Output: %b",mux2_s_y);
+
+		$display("===============");
+		$display("2:1 MUX (4-bit)");
+		$display("===============");
+		err=0;
+		
+		for(i=0;i<100;i=i+1)	begin
+			#100;
+			mux2_m_s	=i%2;
+			mux2_m_d0	=$urandom%15;
+			mux2_m_d1	=$urandom%15;
+		#100;
+		$display("Index[%2d] | SEL:%b | D0:%d | D1:%d | Y:%d",i,mux2_m_s,mux2_m_d0,mux2_m_d1,mux2_m_y);
+		if((mux2_m_s==0)&&(mux2_m_y != mux2_m_d0))	begin
+			err=err+1;
+		end
+		if((mux2_m_s==1)&&(mux2_m_y != mux2_m_d1))	begin
+			err=err+1;
+		end
+	end
+	$display("--------------------");
+	$display("Total Error Count:%d",err);
+	$display("--------------------");
+	#100	$finish;
+  end
+endmodule
+
